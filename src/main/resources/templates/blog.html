@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #blog{
+            height:200px;
+            width:200px;
+            border:2px solid black;
+            padding:10px;
+            margin:10px;
+         }
+    </style>
+</head>
+
+<body>
+
+<div>
+    <form action="/sortblog">
+ <!--        <input type="submit" value="Sorted">-->
+        <select name="sort" onchange="this.form.submit()">
+            <option value="unsorted" th:selected="${currentSort == 'unsorted'}">UnSorted</option>
+            <option value="sorted" th:selected="${currentSort == 'sorted'}">Sorted</option>
+        </select>
+    </form>
+</div>
+<div th:each="post : ${posts}" id="blog">
+
+    <h2 th:text="${post.title}"></h2>
+    <p th:text="${post.excerpt}"></p>
+    <br>
+    <a th:href="@{/readmore(id=${post.id})}">read more...</a>
+</div>
+</body>
+</html>

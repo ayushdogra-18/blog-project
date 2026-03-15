@@ -1,0 +1,16 @@
+# IntelliJ
+.idea/
+*.iml
+*.iws
+out/
+
+# Maven
+target/
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Optional
+.mvn/wrapper/maven-wrapper.jar
