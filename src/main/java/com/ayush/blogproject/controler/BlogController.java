@@ -1,28 +1,26 @@
 package com.ayush.blogproject.controler;
 
-import com.ayush.blogproject.dto.PostBlogDto;
 import com.ayush.blogproject.model.Posts;
+import com.ayush.blogproject.model.Tags;
 import com.ayush.blogproject.service.BlogService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.hibernate.annotations.Collate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 @Controller
-public class blogController {
+public class BlogController {
 
       BlogService blogService;
 
    @Autowired
-   blogController(BlogService blogService){
+   BlogController(BlogService blogService){
        this.blogService=blogService;
    }
 
@@ -70,21 +68,44 @@ public class blogController {
     }
 
 
-    @GetMapping("/readmore")
+    @GetMapping("/updateblog")
     public String readMore(HttpServletRequest req, Model model){
        String id=req.getParameter("id");
-        Integer postId = Integer.parseInt(id);
-       Posts post=blogService.readMore(postId);
+        Long postId = Long.parseLong(id);
+       Posts post=blogService.getPostById(postId);
        model.addAttribute("post",post);
-        return "readmore";
+        return "updateblog";
     }
 
-    @PostMapping("/addcomment")
-    public String addComment(HttpServletRequest req, Model model){
-        String id=req.getParameter("id");
-        Integer postId = Integer.parseInt(id);
-        Posts post=blogService.readMore(postId);
-        model.addAttribute("post",post);
-        return "readmore";
+
+    @PostMapping("/updatepost")
+    public String updatePost(@RequestParam("postId") Long id, Model model){
+        Posts post=blogService.getPostById(id);
+        List<String> list = post.getTags().stream().map( tags -> tags.getName()).toList();
+        String tags=String.join(",",list);
+        model.addAttribute("blog",post);
+        model.addAttribute("tags",tags);
+
+        return "createposts";
     }
+
+    //update edit blog
+    @PostMapping("/updatepublishblog")
+    public String updatePublishBlog(@ModelAttribute("blog") Posts post, Model model,
+                                    @ModelAttribute("blog") Posts posts,
+                                    @RequestParam String tagNames,RedirectAttributes redirectAttributes){
+        Posts updatedPost=blogService.updateBlog(post,tagNames);
+        model.addAttribute("blog",updatedPost);
+        blogService.updateBlog(posts,tagNames);
+        redirectAttributes.addAttribute("id", post.getId());
+        return "redirect:/updateblog";
+    }
+
+    @PostMapping("/deletepost")
+    public String deletePost(@RequestParam("postId") Long id, Model model){
+       blogService.deleteBlog(id);
+        return "redirect:/blog";
+    }
+
+
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jdk.jfr.Enabled;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Data
 @Entity
 @EqualsAndHashCode(exclude = "posts")
+@ToString(exclude = "posts")
 public class Tags extends BaseModel{
     private String name;
 

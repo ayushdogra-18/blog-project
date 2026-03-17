@@ -1,11 +1,14 @@
 package com.ayush.blogproject.service;
 
 import com.ayush.blogproject.dto.PostBlogDto;
+import com.ayush.blogproject.model.Comments;
 import com.ayush.blogproject.model.Posts;
 import com.ayush.blogproject.model.Tags;
+import com.ayush.blogproject.repository.CommentsRepository;
 import com.ayush.blogproject.repository.PostRepository;
 import com.ayush.blogproject.repository.TagRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -17,10 +20,11 @@ public class BlogServiceImp implements BlogService {
 
     PostRepository postRepository;
     TagRepository tagRepository;
-
-    public BlogServiceImp(PostRepository postRepository,TagRepository tagRepository){
+    CommentsRepository commentsRepository;
+    public BlogServiceImp(PostRepository postRepository,TagRepository tagRepository,CommentsRepository commentsRepository){
         this.postRepository=postRepository;
         this.tagRepository=tagRepository;
+        this.commentsRepository=commentsRepository;
     }
 
     @Override
@@ -48,7 +52,7 @@ public class BlogServiceImp implements BlogService {
             posts.setPublishedAt(LocalDateTime.now());
         }else{
             posts.setPublished(false);
-            posts.setPublishedAt(null);
+            posts.setPublishedAt(LocalDateTime.now());
         }
         if(posts.getContent().length()>100) {
             posts.setExcerpt(posts.getContent().substring(0, 100));
@@ -63,10 +67,43 @@ public class BlogServiceImp implements BlogService {
         return postRepository.findAll();
     }
 
+
+
     @Override
-    public Posts readMore(Integer id) {
+    public Posts getPostById(Long id) {
         return postRepository.findById(id).orElse(null);
+
     }
+
+    @Override
+    @Transactional
+    public Posts updateBlog(Posts posts,String tagNames) {
+        String tags[]=tagNames.split(",");
+        HashSet<Tags>tagSet = new HashSet<>();
+        for(String tagName:tags){
+            tagName = tagName.trim();
+
+            Tags tag=tagRepository.findByName(tagName);
+
+            if(tag==null){
+                Tags newTag=new Tags();
+                newTag.setName(tagName);
+                tagRepository.save(newTag);
+                tagSet.add(newTag);
+            }else{
+                tagSet.add(tag);
+            }
+        }
+        posts.setTags(tagSet);
+        return postRepository.save(posts);
+    }
+    @Transactional
+    public void deleteBlog(Long id) {
+         postRepository.deleteById(id);
+    }
+
+
+
 
 
 }

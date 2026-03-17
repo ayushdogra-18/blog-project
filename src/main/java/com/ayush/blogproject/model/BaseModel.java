@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private LocalDateTime createdAt=LocalDateTime.now();
     private LocalDateTime updatedAt=LocalDateTime.now();
 }

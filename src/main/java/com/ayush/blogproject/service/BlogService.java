@@ -10,6 +10,11 @@ import java.util.List;
 public interface BlogService {
     public void savePost(Posts posts,String tagNames,String action);
     public List<Posts> getAllPosts();
-    public Posts readMore(Integer id);
+    public Posts getPostById(Long id);
+    public Posts updateBlog(Posts post,String tagNames);
+    public void deleteBlog(Long id);
+
+
+
 
 }

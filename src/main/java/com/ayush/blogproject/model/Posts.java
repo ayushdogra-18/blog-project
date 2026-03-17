@@ -3,14 +3,18 @@ package com.ayush.blogproject.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
 @Entity
 @EqualsAndHashCode(exclude = "tags")
+@ToString(exclude = "tags")
 public class Posts extends BaseModel{
     private String title;
     private String excerpt;
@@ -28,7 +32,6 @@ public class Posts extends BaseModel{
     private Set<Tags> tags = new HashSet<>();
 
 
-//    @OneToMany
-//    @JoinColumn(name = "comments_id")
-//    private Comments comments;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<Comments> comments = new ArrayList<>();
 }

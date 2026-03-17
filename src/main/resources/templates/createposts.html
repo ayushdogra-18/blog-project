@@ -1,42 +1,133 @@
 
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Create Blog</title>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<h2>Create Blog Post</h2>-->
+
+<!--<form th:action="@{${blog.id} == null ?  @{/blogs} : @{/updatepublishblog}}" th:object="${blog}" method="post">-->
+
+<!--    <input type="hidden" th:field="*{id}" />-->
+<!--    &lt;!&ndash; Title &ndash;&gt;-->
+<!--    <label>Title</label><br>-->
+<!--    <input type="text" th:field="*{title}" placeholder="Enter blog title"/>-->
+<!--    <br><br>-->
+
+<!--    &lt;!&ndash; Author &ndash;&gt;-->
+<!--    <label>Author</label><br>-->
+<!--    <input type="text" th:field="*{author}" placeholder="Enter author name" th:disabled="${blog.id} ? 'true' : 'false'"/>-->
+<!--    <br><br>-->
+
+<!--    &lt;!&ndash; Content &ndash;&gt;-->
+<!--    <label>Content</label><br>-->
+<!--    <textarea th:field="*{content}" rows="6" cols="40"-->
+<!--              placeholder="Write your blog here"></textarea>-->
+<!--    <br><br>-->
+
+
+<!--     Tags-->
+<!--    <label>Tags</label><br>-->
+<!--    <input type="text" name="tagNames" placeholder="e.g. spring, java"/>-->
+<!--    <br><br>-->
+
+<!--    <input type="submit"  name="action" th:value="${blog.id} ? 'Update Blog' : 'Publish Blog' " />-->
+<!--    <input type="submit" name="action" th:value="${blog.id}" th:if="${blog.id == null}"/>-->
+
+<!--</form>-->
+
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Create Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            max-width: 600px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        input[type="submit"] {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007BFF;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        input[type="submit"]:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
 
 <h2>Create Blog Post</h2>
 
-<form th:action="@{/blogs}" th:object="${blog}" method="post">
+<form th:action="@{${blog.id} == null ?  @{/blogs} : @{/updatepublishblog}}" th:object="${blog}" method="post">
 
-    <!-- Title -->
+    <input type="hidden" th:field="*{id}" />
     <label>Title</label><br>
-    <input type="text" th:field="*{title}" placeholder="Enter blog title"/>
+    <input type="text" th:field="*{title}" placeholder="Enter blog title" required/>
     <br><br>
 
-    <!-- Author -->
     <label>Author</label><br>
-    <input type="text" th:field="*{author}" placeholder="Enter author name"/>
+    <input  type="text" th:field="*{author}" placeholder="Enter author name" th:disabled="${blog.id} ? 'true' : 'false'" required/>
     <br><br>
 
-    <!-- Content -->
     <label>Content</label><br>
-    <textarea th:field="*{content}" rows="6" cols="40"
-              placeholder="Write your blog here"></textarea>
+    <textarea th:field="*{content}" rows="6" cols="40" placeholder="Write your blog here" required></textarea>
     <br><br>
 
-
-     Tags
     <label>Tags</label><br>
-    <input type="text" name="tagNames" placeholder="e.g. spring, java"/>
+    <input type="text" name="tagNames" placeholder="e.g. spring, java" th:value="${tags}" required/>
     <br><br>
 
-    <button type="submit"  name="action" value="publish">Publish Blog</button>
-    <button type="submit"  name="action" value="draft">Draft Blog</button>
+    <input type="submit" name="action" th:value="${blog.id} ? 'Update Blog' : 'Publish Blog' " />
+    <input type="submit" name="action" value="Draft" th:if="${blog.id == null}"/>
 
 </form>
 
 </body>
 </html>
-

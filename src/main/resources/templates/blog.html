@@ -1,36 +1,131 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--    <style>-->
+<!--        #blog{-->
+<!--            height:200px;-->
+<!--            width:200px;-->
+<!--            border:2px solid black;-->
+<!--            padding:10px;-->
+<!--            margin:10px;-->
+
+<!--         }-->
+<!--    </style>-->
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div>-->
+<!--    <form action="/sortblog">-->
+<!-- &lt;!&ndash;        <input type="submit" value="Sorted">&ndash;&gt;-->
+<!--        <select name="sort" onchange="this.form.submit()">-->
+<!--            <option value="unsorted" th:selected="${currentSort == 'unsorted'}">UnSorted</option>-->
+<!--            <option value="sorted" th:selected="${currentSort == 'sorted'}">Sorted</option>-->
+<!--        </select>-->
+<!--    </form>-->
+<!--</div>-->
+<!--<div th:each="post : ${posts}" id="blog">-->
+
+<!--    <h2 th:text="${post.title}"></h2>-->
+<!--    <p th:text="${post.excerpt}"></p>-->
+<!--    <br>-->
+<!--    <a th:href="@{/readmore(id=${post.id})}">read more...</a>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
+
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        #blog{
-            height:200px;
-            width:200px;
-            border:2px solid black;
+        h1{
+            color:orange;
+            font-size:3rem;
             padding:10px;
+            margin:20px;
+        }
+        .blog-container {
+            height:700px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
             margin:10px;
-         }
+            padding:10px;
+        }
+
+    #blog {
+    height: 500px;
+    width: 500px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px;
+    box-shadow: 3px 3px 12px rgba(0,0,0,0.2);
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+        #blog h2 {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        #blog p {
+            font-size: 0.95em;
+            color: #555;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #blog a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        select {
+            padding: 5px 8px;
+            font-size: 1em;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+
+
+
     </style>
 </head>
 
 <body>
-
+        <h1>Blog Application</h1>
 <div>
     <form action="/sortblog">
- <!--        <input type="submit" value="Sorted">-->
         <select name="sort" onchange="this.form.submit()">
-            <option value="unsorted" th:selected="${currentSort == 'unsorted'}">UnSorted</option>
-            <option value="sorted" th:selected="${currentSort == 'sorted'}">Sorted</option>
+            <option value="sorted" th:selected="${currentSort == 'sorted'}">Title</option>
+            <option value="sorted" th:selected="${currentSort == 'sorted'}">publishedAt</option>
+            <option value="sorted" th:selected="${currentSort == 'sorted'}">Author</option>
         </select>
     </form>
 </div>
-<div th:each="post : ${posts}" id="blog">
-
-    <h2 th:text="${post.title}"></h2>
-    <p th:text="${post.excerpt}"></p>
-    <br>
-    <a th:href="@{/readmore(id=${post.id})}">read more...</a>
+<br>
+<div class="blog-container">
+    <div th:each="post : ${posts}" id="blog">
+        Title: <h2 th:text="${post.title}"></h2>
+        Posted at: <p th:text="${#temporals.format(post.publishedAt, 'dd MMMM yyyy')}"></p>
+        <p th:text="${post.excerpt}"></p>
+       Tags:  <ul>
+            <li th:each="tag : ${post.tags}" th:text="${tag.name}"></li>
+        </ul>
+        <br>
+        <a th:href="@{/updateblog(id=${post.id})}">read more...</a>
+    </div>
 </div>
+
 </body>
 </html>

@@ -11,8 +11,8 @@ import lombok.Data;
 public class Comments extends BaseModel {
     private String name;
     private String email;
-    private String password;
-
+    private String comment;
     @ManyToOne
+    @JoinColumn(name="post_id")
     private Posts post;
 }
