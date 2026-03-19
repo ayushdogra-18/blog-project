@@ -1,180 +1,281 @@
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>Title</title>-->
-<!--    <style>-->
-<!--        #blog{-->
-<!--         height:500px;-->
-<!--         width:500px;-->
-<!--         border:2px solid black;-->
-<!--         padding:10px;-->
-<!--         margin:10px;-->
-<!--      }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body>-->
-
-
-<!--<div th:object="${post}" id="blog">-->
-<!--    <div>-->
-
-<!--        <form action="/updatepost" method="post">-->
-<!--            <input type="hidden" name="postId" th:value="${post.id}">-->
-<!--            <input type="submit" value="Edit">-->
-<!--        </form>-->
-<!--        <br>-->
-<!--        <form action="/deletepost" method="post">-->
-<!--            <input type="hidden" name="postId" th:value="${post.id}">-->
-<!--            <input type="submit" value="Delete">-->
-<!--        </form>-->
-
-<!--    </div>-->
-<!--    <h2 th:text="${post.title}"></h2>-->
-<!--    <p th:text="${post.content}"></p>-->
-<!--    <br>-->
-<!--    <h3>Comments.....</h3>-->
-<!--    <form action="/addcomment" method="post">-->
-<!--        <input type="hidden" name="postId" th:value="${post.id}">-->
-<!--        <input type="text" name="commentText" placeholder="Write comment">-->
-<!--        <button type="submit">Add Comment</button>-->
-<!--    </form>-->
-<!--</div>-->
-<!--</body>-->
-<!--</html>-->
-
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Blog Post</title>
     <style>
-        #blog {
-    width: 500px;
-    border: 2px solid #333;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 15px;
-    box-shadow: 3px 3px 12px rgba(0,0,0,0.2);
-    background-color: #f9f9f9;
-    box-sizing: border-box;
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-        #blog h2 {
-            font-size: 1.5em;
-            color: #222;
-            margin-bottom: 10px;
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        #blog p {
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #111111;
+            margin: 0;
+            padding: 24px;
+        }
+
+        #blog {
+            width: 650px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 28px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .top-actions a {
+            text-decoration: none;
+            color: #555;
+            font-size: 0.9em;
+            transition: color 0.2s;
+        }
+
+        .top-actions a:hover {
+            color: #111;
+        }
+
+        .btn-edit {
+            padding: 5px 14px;
+            background-color: #111111;
+            color: white;
+            border: 1px solid #111;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88em;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.2s;
+        }
+
+        .btn-edit:hover {
+            background-color: #333;
+        }
+
+        .btn-delete {
+            padding: 5px 14px;
+            background-color: #ffffff;
+            color: #111;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88em;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .btn-delete:hover {
+            background-color: #f5f5f5;
+            border-color: #aaa;
+        }
+
+        .post-title {
+            font-size: 1.7rem;
+            color: #111111;
+            margin-bottom: 14px;
+            font-weight: bold;
+        }
+
+        .post-content {
             font-size: 1em;
             color: #555;
-            line-height: 1.4;
+            line-height: 1.75;
+            margin-bottom: 28px;
         }
 
-        #blog h3 {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: #333;
+        .comments-heading {
+            font-size: 1.2rem;
+            color: #111111;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e8e8e8;
         }
 
-        #blog form {
-            margin-bottom: 10px;
+        .comment-form {
+            background-color: #f9f9f9;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
         }
 
-        #blog input[type="text"] {
-            padding: 5px 8px;
-            font-size: 1em;
-            border-radius: 4px;
+        .comment-form input[type="text"] {
+            padding: 7px 10px;
+            font-size: 0.9em;
             border: 1px solid #ccc;
-            width: calc(100% - 16px);
-            margin-bottom: 5px;
+            border-radius: 6px;
+            width: 100%;
+            margin-bottom: 8px;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #111;
+            outline: none;
+            transition: border-color 0.2s;
         }
 
-        #blog button, #blog input[type="submit"] {
-            padding: 5px 12px;
-            font-size: 1em;
-            border-radius: 4px;
-            border: none;
-            background-color: #007BFF;
+        .comment-form input[type="text"]:focus {
+            border-color: #888;
+        }
+
+        .comment-form input[type="text"]::placeholder {
+            color: #bbb;
+        }
+
+        .btn-submit {
+            padding: 7px 18px;
+            background-color: #111111;
             color: white;
+            border: 1px solid #111;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 0.9em;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.2s;
         }
 
-        #blog div {
-            margin-bottom: 15px;
+        .btn-submit:hover {
+            background-color: #333;
         }
-  .comment {
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f2f2f2;
-}
 
+        .comment {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border: 1px solid #eeeeee;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
 
-.comment-name {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #333;
-}
+        .comment-name {
+            font-weight: bold;
+            color: #111111;
+            font-size: 0.95em;
+            margin-bottom: 4px;
+        }
 
+        .comment-text {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin: 0 0 10px 0;
+        }
 
-.comment-text {
-    margin: 0;
-    color: #555;
-    font-size: 14px;
-    line-height: 1.4;
-}
+        .comment-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-comment-edit {
+            padding: 3px 12px;
+            background-color: #111111;
+            color: white;
+            border: 1px solid #111;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.2s;
+        }
+
+        .btn-comment-edit:hover {
+            background-color: #333;
+        }
+
+        .btn-comment-delete {
+            padding: 3px 12px;
+            background-color: #ffffff;
+            color: #111;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .btn-comment-delete:hover {
+            background-color: #f5f5f5;
+            border-color: #aaa;
+        }
     </style>
 </head>
 <body>
 
 <div th:object="${post}" id="blog">
-    <div>
-        <a th:href="@{/blog}">Back to Blog.....</a>
+
+    <div class="top-actions">
+        <a th:href="@{/blog}">← Back to Blog</a>
+
         <form action="/updatepost" method="post">
             <input type="hidden" name="postId" th:value="${post.id}">
-            <input type="submit" value="Edit">
+            <input type="submit" value="Edit Post" class="btn-edit">
         </form>
-        <form action="/deletepost" method="post">
+
+        <form action="/deletepost" method="post"
+              onsubmit="return confirm('Are you sure you want to delete this post?');">
             <input type="hidden" name="postId" th:value="${post.id}">
-            <input type="submit" value="Delete">
+            <input type="submit" value="Delete Post" class="btn-delete">
         </form>
     </div>
-    <span style="font-size:2rem" th:text=" 'Title: ' + ${post.title}"></span>
-    <p th:text="${post.content}"></p>
 
-    <h3 style="font-size:2rem">Comments.....</h3>
+    <div class="post-title" th:text="${post.title}"></div>
+    <p class="post-content" th:text="${post.content}"></p>
 
+    <h3 class="comments-heading">Comments</h3>
 
-    <form action="/addcomment" method="post">
-        <input type="hidden" name="postId" th:value="${post.id}"/>
-        <input type="text"  name="name" placeholder="Your name"/>
-        <input type="text"  name="email" placeholder="Your email"/>
-        <input type="text" name="comment" placeholder="Write comment"/>
-        <button type="submit">Add Comment</button>
-    </form>
-    <br> <br>
+    <div class="comment-form">
+        <form action="/addcomment" method="post">
+            <input type="hidden" name="postId" th:value="${post.id}"/>
+            <input type="hidden" name="commentId"
+                   th:value="${editComment != null ? editComment.id : ''}"/>
 
+            <input type="text" name="name"
+                   th:value="${editComment != null ? editComment.name : ''}"
+                   placeholder="Your name"/>
 
+            <input type="text" name="email"
+                   th:value="${editComment != null ? editComment.email : ''}"
+                   placeholder="Your email"/>
+
+            <input type="text" name="comment"
+                   th:value="${editComment != null ? editComment.comment : ''}"
+                   placeholder="Write your comment..."/>
+
+            <button type="submit" class="btn-submit"
+                    th:text="${editComment != null ? 'Update Comment' : 'Add Comment'}">
+            </button>
+        </form>
+    </div>
 
     <div class="comment" th:each="c : ${post.comments}">
-        <form action="editcomments" method="post">
-            <input type="hidden" th:value="${post.id}">
-            <input type="submit" value="Edit">
-            <input type="submit" value="Delete">
-        </form>
-        <p class="comment-name" th:text="${c.name}" style="font-size:1.7rem;color:#007BFF"></p>
+        <p class="comment-name" th:text="${c.name}"></p>
         <p class="comment-text" th:text="${c.comment}"></p>
+
+        <div class="comment-actions">
+            <form action="/editcomments" method="post">
+                <input type="hidden" name="commentId" th:value="${c.id}">
+                <input type="submit" value="Edit" class="btn-comment-edit">
+            </form>
+
+            <form action="/deletecomment" method="post">
+                <input type="hidden" name="commentId" th:value="${c.id}">
+                <input type="hidden" name="postId" th:value="${post.id}">
+                <input type="submit" value="Delete" class="btn-comment-delete">
+            </form>
+        </div>
     </div>
-
-
-    <br>
-    <br>
 
 </div>
 </body>

@@ -10,14 +10,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class CommentServicesImp implements CommentService{
+public class CommentServicesImp implements CommentService {
 
     @Autowired
     CommentsRepository commentsRepository;
     PostRepository postRepository;
-    public CommentServicesImp(CommentsRepository commentsRepository, PostRepository postRepository){
-        this.postRepository=postRepository;
-        this.commentsRepository=commentsRepository;
+
+    public CommentServicesImp(CommentsRepository commentsRepository, PostRepository postRepository) {
+        this.postRepository = postRepository;
+        this.commentsRepository = commentsRepository;
     }
 
     @Transactional
@@ -28,7 +29,6 @@ public class CommentServicesImp implements CommentService{
         if (post == null) {
             throw new RuntimeException("Post not found with id: " + id);
         }
-
         Comments comments = new Comments();
         comments.setName(name);
         comments.setEmail(email);
@@ -36,10 +36,29 @@ public class CommentServicesImp implements CommentService{
         comments.setPost(post);
         commentsRepository.save(comments);
     }
+
+    public Comments getCommentById(Long id) {
+        return commentsRepository.findById(id).orElseThrow();
+    }
+
+    public Long getPostIdByCommentId(Long commentId) {
+        Comments comment = commentsRepository.findById(commentId).orElseThrow();
+        return comment.getPost().getId();
+    }
+
+    @Transactional
+    public void deleteBlog(Long commentId, Long postId) {
+        commentsRepository.deleteByIdAndPostId(commentId, postId);
+    }
+
     @Override
     @Transactional
-    public void editCommnent(Long id) {
-        Comments comments = commentsRepository.findById(id).orElseThrow();
-        commentsRepository.save(comments);
+    public void updateComment(Long commentId, String name, String email, String comment) {
+        Comments existing = commentsRepository.findById(commentId).orElseThrow();
+        existing.setName(name);
+        existing.setEmail(email);
+        existing.setComment(comment);
+        commentsRepository.save(existing);
     }
+
 }

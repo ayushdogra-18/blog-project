@@ -1,130 +1,353 @@
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>Title</title>-->
-<!--    <style>-->
-<!--        #blog{-->
-<!--            height:200px;-->
-<!--            width:200px;-->
-<!--            border:2px solid black;-->
-<!--            padding:10px;-->
-<!--            margin:10px;-->
-
-<!--         }-->
-<!--    </style>-->
-<!--</head>-->
-
-<!--<body>-->
-
-<!--<div>-->
-<!--    <form action="/sortblog">-->
-<!-- &lt;!&ndash;        <input type="submit" value="Sorted">&ndash;&gt;-->
-<!--        <select name="sort" onchange="this.form.submit()">-->
-<!--            <option value="unsorted" th:selected="${currentSort == 'unsorted'}">UnSorted</option>-->
-<!--            <option value="sorted" th:selected="${currentSort == 'sorted'}">Sorted</option>-->
-<!--        </select>-->
-<!--    </form>-->
-<!--</div>-->
-<!--<div th:each="post : ${posts}" id="blog">-->
-
-<!--    <h2 th:text="${post.title}"></h2>-->
-<!--    <p th:text="${post.excerpt}"></p>-->
-<!--    <br>-->
-<!--    <a th:href="@{/readmore(id=${post.id})}">read more...</a>-->
-<!--</div>-->
-<!--</body>-->
-<!--</html>-->
-
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Blog Application</title>
     <style>
-        h1{
-            color:orange;
-            font-size:3rem;
-            padding:10px;
-            margin:20px;
-        }
-        .blog-container {
-            height:700px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin:10px;
-            padding:10px;
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-    #blog {
-    height: 500px;
-    width: 500px;
-    border: 2px solid #333;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 15px;
-    box-shadow: 3px 3px 12px rgba(0,0,0,0.2);
-    background-color: #f9f9f9;
-    box-sizing: border-box;
-    overflow-y: auto;
-}
+        body, html {
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #111111;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+
+        .main-wrapper > form {
+            margin-top: 24px;
+        }
+
+        .main-wrapper > form input[type="submit"] {
+            padding: 7px 18px;
+            font-size: 0.88em;
+            font-family: Arial, sans-serif;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            background-color: #111111;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        .main-wrapper > form input[type="submit"]:hover {
+            background-color: #333;
+        }
+
+        h1 {
+            color: #111111;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 28px 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .sort-form {
+            margin: 12px 0 4px;
+        }
+
+        .sort-form form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            padding: 7px 10px;
+            font-size: 0.88em;
+            font-family: Arial, sans-serif;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #ffffff;
+            color: #111;
+            width: 200px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #888;
+        }
+
+        input[type="text"]::placeholder {
+            color: #aaa;
+        }
+
+        select {
+            padding: 7px 10px;
+            font-size: 0.88em;
+            font-family: Arial, sans-serif;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #ffffff;
+            color: #111;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: #888;
+        }
+
+        .sort-form button[type="submit"] {
+            padding: 7px 18px;
+            background: #111111;
+            color: #ffffff;
+            border: 1px solid #111;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88em;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.2s;
+        }
+
+        .sort-form button[type="submit"]:hover {
+            background-color: #333;
+        }
+
+        .sort-form a {
+            margin-left: 2px;
+            color: #999;
+            font-size: 0.85em;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .sort-form a:hover {
+            color: #444;
+        }
+
+        .blog-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 24px 0;
+            flex-grow: 1;
+
+        }
+
+        #blog {
+            width: 100%;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #ffffff;
+            overflow-y: hidden;
+            height:450px;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+
+        #blog:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border-color: #ccc;
+        }
+
         #blog h2 {
-            font-size: 1.2em;
-            margin-bottom: 5px;
-            color: #333;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #111111;
+            line-height: 1.35;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+
+        #blog h3 {
+            font-size: 0.88em;
+            font-weight: normal;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        #blog h4 {
+            font-size: 0.8em;
+            font-weight: normal;
+            color: #999;
+            margin-bottom: 10px;
         }
 
         #blog p {
-            font-size: 0.95em;
+            font-size: 0.9em;
             color: #555;
+            line-height: 1.6;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         #blog a {
             text-decoration: none;
-            color: #007BFF;
+            color: #111;
             font-weight: bold;
+            font-size: 0.83em;
+            border-bottom: 1px solid #ccc;
+            transition: color 0.2s, border-color 0.2s;
         }
 
-        select {
-            padding: 5px 8px;
-            font-size: 1em;
+        #blog a:hover {
+            color: #555;
+            border-bottom-color: #999;
+        }
+
+        .tags {
+            margin-top: 14px;
+        }
+
+        .tag-box {
+            display: inline-block;
+            background-color: #f0f0f0;
+            color: #444;
+            padding: 3px 10px;
+            margin: 3px 3px 3px 0;
             border-radius: 4px;
-            border: 1px solid #ccc;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
+        .pagination {
+            text-align: center;
+            padding: 24px 0 32px;
+            border-top: 1px solid #e8e8e8;
+            margin-top: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+        }
 
+        .pagination a {
+            text-decoration: none;
+            padding: 7px 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            color: #111;
+            font-size: 0.88em;
+            font-weight: bold;
+            background-color: #ffffff;
+            transition: background-color 0.2s, border-color 0.2s;
+            display: inline-block;
+        }
 
+        .pagination a:hover {
+            background-color: #f0f0f0;
+            border-color: #aaa;
+        }
 
+        .pagination span {
+            font-size: 0.88em;
+            font-weight: bold;
+            color: #111;
+            padding: 7px 14px;
+            background-color: #111;
+            color: #fff;
+            border-radius: 6px;
+        }
     </style>
 </head>
-
 <body>
-        <h1>Blog Application</h1>
-<div>
-    <form action="/sortblog">
-        <select name="sort" onchange="this.form.submit()">
-            <option value="sorted" th:selected="${currentSort == 'sorted'}">Title</option>
-            <option value="sorted" th:selected="${currentSort == 'sorted'}">publishedAt</option>
-            <option value="sorted" th:selected="${currentSort == 'sorted'}">Author</option>
-        </select>
+<div class="main-wrapper">
+    <form action="/createposts">
+        <input type="submit" value="+  Create Blog" />
     </form>
-</div>
-<br>
-<div class="blog-container">
-    <div th:each="post : ${posts}" id="blog">
-        Title: <h2 th:text="${post.title}"></h2>
-        Posted at: <p th:text="${#temporals.format(post.publishedAt, 'dd MMMM yyyy')}"></p>
-        <p th:text="${post.excerpt}"></p>
-       Tags:  <ul>
-            <li th:each="tag : ${post.tags}" th:text="${tag.name}"></li>
-        </ul>
-        <br>
-        <a th:href="@{/updateblog(id=${post.id})}">read more...</a>
+
+    <h1>Blog Application</h1>
+
+    <div class="sort-form">
+        <form action="/blog" method="get">
+            <input type="hidden" name="limit" th:value="${limit}">
+            <input type="hidden" name="start" value="0">
+
+            <!-- search box -->
+            <input type="text"
+                   name="search"
+                   th:value="${search}"
+                   placeholder="Search title or content...">
+
+            <!-- author dropdown -->
+            <select name="author">
+                <option value="">All Authors</option>
+                <option th:each="a : ${allAuthors}"
+                        th:value="${a}"
+                        th:text="${a}"
+                        th:selected="${a == author}">
+                </option>
+            </select>
+
+            <!-- tag dropdown -->
+            <select name="tagId">
+                <option value="">All Tags</option>
+                <option th:each="tag : ${allTags}"
+                        th:value="${tag.id}"
+                        th:text="${tag.name}"
+                        th:selected="${tag.id == tagId}">
+                </option>
+            </select>
+
+            <!-- sort dropdown -->
+            <select name="sortBy">
+                <option value="title"       th:selected="${sortBy == 'title'}">Title</option>
+                <option value="publishedAt" th:selected="${sortBy == 'publishedAt'}">Newest</option>
+                <option value="author"      th:selected="${sortBy == 'author'}">Author</option>
+                <option value="content"     th:selected="${sortBy == 'content'}">Content</option>
+            </select>
+
+            <button type="submit">Search</button>
+
+            <a th:href="@{/blog(limit=${limit})}">Clear</a>
+        </form>
     </div>
+
+    <div class="blog-container">
+        <div th:each="post : ${posts}" id="blog">
+            <h2 th:text="${'Title: '+post.title}"></h2>
+            <br>
+            <h3 th:text="${'Author: '+post.author}"></h3>
+            <br>
+            <h4 th:text="${'Posted at: '+#temporals.format(post.publishedAt, 'dd MMMM yyyy')}"></h4>
+            <br>
+            <p th:text="${post.excerpt}"></p>
+            <a th:href="@{/updateblog(id=${post.id})}">read more...</a>
+            <br>
+            <br>
+            <br>
+
+            <div class="tags">
+                <span th:each="tag : ${post.tags}" th:text="${tag.name}" class="tag-box"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="pagination">
+        <a th:if="${start > 0}"
+           th:href="@{/blog(start=${start - limit}, limit=${limit}, sortBy=${sortBy},
+                        search=${search}, author=${author}, tagId=${tagId})}">
+            ← Previous
+        </a>
+
+        <span th:text="${(start / limit) + 1}"></span>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/blog(start=${start + limit}, limit=${limit}, sortBy=${sortBy},
+                        search=${search}, author=${author}, tagId=${tagId})}">
+            Next →
+        </a>
+    </div>
+
 </div>
 
 </body>

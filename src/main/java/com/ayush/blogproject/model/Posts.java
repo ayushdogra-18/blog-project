@@ -16,6 +16,7 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = "tags")
 @ToString(exclude = "tags")
 public class Posts extends BaseModel{
+
     private String title;
     private String excerpt;
     private String content;
