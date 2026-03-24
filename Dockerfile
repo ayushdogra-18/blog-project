@@ -1,4 +1,8 @@
-FROM ubuntu:latest
-LABEL authors="ayush"
+FROM maven:3.9.9-eclipse-temurin-17
 
-ENTRYPOINT ["top", "-b"]
+WORKDIR /app
+COPY . .
+
+RUN mvn clean package -DskipTests
+
+CMD ["sh", "-c", "java -jar target/*.jar"]
