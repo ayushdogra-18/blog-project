@@ -12,6 +12,7 @@ public class Comments extends BaseModel {
     private String name;
     private String email;
     private String comment;
+
     @ManyToOne
     @JoinColumn(name="post_id")
     private Posts post;

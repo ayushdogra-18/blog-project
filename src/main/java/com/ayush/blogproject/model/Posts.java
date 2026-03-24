@@ -19,10 +19,15 @@ public class Posts extends BaseModel{
 
     private String title;
     private String excerpt;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
-    private String author;
     private LocalDateTime publishedAt;
     private boolean isPublished;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToMany
     @JoinTable(

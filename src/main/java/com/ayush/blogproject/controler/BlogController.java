@@ -2,11 +2,15 @@ package com.ayush.blogproject.controler;
 
 import com.ayush.blogproject.model.Comments;
 import com.ayush.blogproject.model.Posts;
+import com.ayush.blogproject.model.User;
+import com.ayush.blogproject.repository.UserRepository;
 import com.ayush.blogproject.service.BlogService;
 import com.ayush.blogproject.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +23,13 @@ public class BlogController {
 
     BlogService blogService;
     CommentService commentService;
+    private final UserRepository userRepository;
 
     @Autowired
-    BlogController(BlogService blogService, CommentService commentService) {
+    BlogController(BlogService blogService, CommentService commentService,UserRepository userRepository) {
         this.blogService = blogService;
         this.commentService = commentService;
+        this.userRepository = userRepository;
     }
 
 
@@ -34,19 +40,26 @@ public class BlogController {
 
 
     @GetMapping("/createposts")
-    public String createBlogController(Model model) {
+    public String createBlogController(Model model,
+                                       @AuthenticationPrincipal UserDetails userDetails) {
+
         Posts posts = new Posts();
         model.addAttribute("blog", posts);
+
+        //logged in user ka username HTML ko bhejo
+        model.addAttribute("loggedInUsername", userDetails.getUsername());
         return "createposts";
     }
 
     @PostMapping("/blogs")
     public String postBlogController(@ModelAttribute("blog") Posts posts,
                                      @RequestParam String tagNames,
-                                     @RequestParam String action) {
+                                     @RequestParam String action,
+                                     @AuthenticationPrincipal UserDetails userDetails) {
         System.out.println(action);
-        System.out.println(posts.getAuthor() + "   authorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-        blogService.savePost(posts, tagNames, action);
+//        System.out.println(posts.getAuthor() + "   authorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        String username = userDetails.getUsername();
+        blogService.savePost(posts, tagNames, action, username);
         return "redirect:/blog";
     }
 
@@ -57,9 +70,17 @@ public class BlogController {
                        @RequestParam(defaultValue = "") String search,
                        @RequestParam(defaultValue = "") String author,
                        @RequestParam(required = false) Long tagId,
+                       @AuthenticationPrincipal UserDetails userDetails,
                        Model model) {
 
         int page = start / limit;
+
+                if (userDetails != null) {
+            User user = userRepository.findByUsername(userDetails.getUsername()).orElse(null);
+            if (user != null) {
+                model.addAttribute("loggedInEmail", user.getEmail());
+            }
+        }
 
         Page<Posts> posts = blogService.getAllPosts(page, limit, sortBy, search, author, tagId);
 
