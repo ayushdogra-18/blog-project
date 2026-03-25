@@ -141,10 +141,12 @@ public class BlogServiceImp implements BlogService {
     @Transactional
     public Posts updateBlog(Posts posts, String tagNames) {
 
+        Posts existing = postRepository.findById(posts.getId()).orElseThrow();
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = auth.getName();
 
-        boolean isOwner = posts.getUser().getUsername().equals(userName);
+        boolean isOwner = existing.getUser().getUsername().equals(userName);
         boolean isAdmin = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
@@ -152,7 +154,7 @@ public class BlogServiceImp implements BlogService {
             throw new AccessDeniedException("Not allowed!");
         }
 
-        Posts existing = postRepository.findById(posts.getId()).orElseThrow();
+
         String tags[] = tagNames.split(",");
         HashSet<Tags> tagSet = new HashSet<>();
         for (String tagName : tags) {
