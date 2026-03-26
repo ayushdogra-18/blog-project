@@ -49,6 +49,7 @@ public interface PostRepository extends JpaRepository<Posts, Long> {
     AND (CAST(:tagId AS BIGINT) IS NULL OR t.id = CAST(:tagId AS BIGINT))
     """,
             nativeQuery = true)
+
     Page<Posts> findWithFilters(@Param("search") String search,
                                 @Param("author") String author,
                                 @Param("tagId") Long tagId,

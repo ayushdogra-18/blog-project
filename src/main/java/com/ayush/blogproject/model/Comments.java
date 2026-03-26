@@ -1,5 +1,7 @@
 package com.ayush.blogproject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
@@ -14,6 +16,13 @@ public class Comments extends BaseModel {
     private String comment;
 
     @ManyToOne
-    @JoinColumn(name="post_id")
+    @JsonIgnore
+    @JoinColumn(name = "post_id")
     private Posts post;
+
+//    @JsonProperty("post")          // allows deserialization (JSON input)
+//    public void setPost(Posts post) {
+//        this.post = post;
+//    }
+
 }

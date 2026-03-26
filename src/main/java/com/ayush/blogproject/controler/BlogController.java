@@ -32,12 +32,10 @@ public class BlogController {
         this.userRepository = userRepository;
     }
 
-
     @GetMapping("/")
     public String home() {
         return "home";
     }
-
 
     @GetMapping("/createposts")
     public String createBlogController(Model model,
@@ -117,7 +115,6 @@ public class BlogController {
         return "updateblog";
     }
 
-
     @PostMapping("/updatepost")
     public String updatePost(@RequestParam("postId") Long id, Model model) {
         Posts post = blogService.getPostById(id);
@@ -131,8 +128,7 @@ public class BlogController {
 
     //update edit blog
     @PostMapping("/updatepublishblog")
-    public String updatePublishBlog(@ModelAttribute("blog") Posts post, Model model,
-                                    @ModelAttribute("blog") Posts posts,
+    public String updatePublishBlog(@ModelAttribute("blog") Posts post,
                                     @RequestParam String tagNames, RedirectAttributes redirectAttributes) {
         blogService.updateBlog(post, tagNames);
         redirectAttributes.addAttribute("id", post.getId());

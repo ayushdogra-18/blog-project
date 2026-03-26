@@ -13,4 +13,5 @@ public interface CommentService {
     void updateComment(Long commentId, String name, String email, String comment);
 
     void deleteBlog(Long id, Long postId);
+    void deleteComment(Long commentId);
 }

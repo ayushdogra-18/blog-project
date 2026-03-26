@@ -60,5 +60,10 @@ public class CommentServicesImp implements CommentService {
         existing.setComment(comment);
         commentsRepository.save(existing);
     }
+    @Override
+    @Transactional
+    public void deleteComment(Long commentId) {
+        commentsRepository.deleteById(commentId);
+    }
 
 }

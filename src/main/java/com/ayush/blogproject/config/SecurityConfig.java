@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,8 +27,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**")
+                )
                 .userDetailsService(userDetailsService)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/blogs").permitAll()
                         //  allow — read, filter, search, comment
                         .requestMatchers(HttpMethod.GET, "/", "/blog", "/updateblog").permitAll()
                         .requestMatchers(HttpMethod.POST, "/addcomment").permitAll()
@@ -43,7 +49,16 @@ public class SecurityConfig {
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_AUTHOR")
 
                         .anyRequest().authenticated()
+
+//                .requestMatchers("/api/auth/**").permitAll()
+//                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+//                .requestMatchers(HttpMethod.GET, "/api/posts/**/comments").permitAll()
+//                .requestMatchers("/api/posts/**", "/api/comments/**")
+//                .hasAnyAuthority("ROLE_ADMIN", "ROLE_AUTHOR")
+//
+//                .anyRequest().authenticated()
                 )
+                .httpBasic(Customizer.withDefaults())   // <-- add this for API authentication
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/blog", true)

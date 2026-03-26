@@ -176,7 +176,7 @@ public class BlogServiceImp implements BlogService {
         posts.setPublished(existing.isPublished());
         posts.setPublishedAt(existing.getPublishedAt());
 
-        if (posts.getContent().length() > 100) {
+        if (posts.getContent()!=null && posts.getContent().length() > 100) {
             posts.setExcerpt(posts.getContent().substring(0, 100));
         } else {
             posts.setExcerpt(posts.getContent());
@@ -190,7 +190,8 @@ public class BlogServiceImp implements BlogService {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = auth.getName();
-        Posts posts=postRepository.findById(id).orElse(null);
+        Posts posts = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
         boolean isOwner = posts.getUser().getUsername().equals(userName);
         boolean isAdmin = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
